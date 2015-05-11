@@ -8,5 +8,5 @@ endif
 " Keymaps
 
 " <leader>w .. save,evaluate,save.
-nnoremap <buffer> <localleader>w :w<cr>:call cworksheet#CWorksheetEvaluate()<cr>:w<cr>
+nnoremap <buffer> <localleader>w :call cworksheet#CWorksheetClear()<cr>:w<cr>:call cworksheet#CWorksheetEvaluate()<cr>:w<cr>
 nnoremap <buffer> <localleader>e :call cworksheet#CWorksheetClear()<cr>:w<cr>
