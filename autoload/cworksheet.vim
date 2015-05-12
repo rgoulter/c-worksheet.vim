@@ -1,10 +1,9 @@
 function! cworksheet#CWorksheetClear()
     " Remove all matches of the regex:
-    "   \s*\/\/>.*\(\n\s*\/\/|.*\)*
+    "   \(\s*\n\)\?\s*\/\/>.*\(\n\s*\/\/|.*\)*
     " i.e. all spaces leading up to //> and to EOL,
     "  as well as any blank lines leading up to //| and to EOL.
-    " TODO: Doesn't work for where `//>` follows a very long line.
-    execute "silent! %s/\\s*\\/\\/>.*\\(\\n\\s*\\/\\/|.*\\)*//"
+    execute "silent! %s/\\(\\s*\\n\\)\\?\\s*\\/\\/>.*\\(\\n\\s*\\/\\/|.*\\)*//"
 endfunction
 
 
