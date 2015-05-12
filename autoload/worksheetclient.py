@@ -5,16 +5,18 @@ import shlex
 import socket
 import subprocess
 import sys
-import tempfile
 
 
 def start_server(cmdStr):
 	cmd = shlex.split(cmdStr)
 
-	# Pipe STDOUT, STDERR to a (throwaway) temporary file,
-	# because nvim complains if subprocess outputs to STDOUT.
-	tmpf = tempfile.NamedTemporaryFile(prefix="cworksheetsrv")
-	subprocess.Popen(cmd, stdout=tmpf, stderr=tmpf)
+	srv_p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+	# From v0.2.2, Server should output at least one line when it runs,
+	# So we can 'block' until it runs.
+	# If server already running (when we try to run another one), it will
+	#  write errors to the same file.
+	srv_p.stdout.readline()
 
 
 
