@@ -3,46 +3,58 @@ function! cworksheet#CWorksheetClear()
     "   \s*\/\/>.*\(\n\s*\/\/|.*\)*
     " i.e. all spaces leading up to //> and to EOL,
     "  as well as any blank lines leading up to //| and to EOL.
+    " TODO: Doesn't work for where `//>` follows a very long line.
     execute "silent! %s/\\s*\\/\\/>.*\\(\\n\\s*\\/\\/|.*\\)*//"
 endfunction
 
 
 " Need this function for when this plugin has additional flags to
 " pass to the cworksheet program.
-function! cworksheet#CWorksheetCommand()
-    return g:cworksheet_command
+function! cworksheet#CWorksheetifyServerCommand()
+    return g:cworksheetify_server_command . " " . g:cworksheetify_server_port
 endfunction
 
 
-" Load helper.py from same directory as this script.
-"
-" helper.py has some functions which can
-" distinguish output from a worksheet.
-"
-" output = reduce(acc_worksheet_output, lines, [])
-execute "pyfile " . expand("<sfile>:h") . "/helper.py"
+" Load worksheetclient.py from same directory as this script.
+execute "pyfile " . expand("<sfile>:h") . "/worksheetclient.py"
 
 
 function! cworksheet#CWorksheetEvaluate()
-    let cmd = cworksheet#CWorksheetCommand()
+    let cmd = cworksheet#CWorksheetifyServerCommand()
 
     " Full path of current file/buffer.
-    let f = expand("%:p")
-
-    let wsfy_str = system(cmd . " " . f)
-    let wsfy_lines = split(wsfy_str, "\n")
+    let cSrcFilename = expand("%:p")
 
     python << EOF
 import vim
 
-def vim_worksheetify():
-    wsfy_lines = vim.eval("l:wsfy_lines")
-    ws_output = reduce(acc_worksheet_output, wsfy_lines, [])
-    return ws_output
+# Ensure the Worksheetify server is running.
+# Assumes that the port given by `g:cworksheetify_server_port` is
+#  not used by another program.
+# Short of coming up with a way to check whether the Worksheetify is
+#  properly running, just trying to run it (and ignoring if it crashes
+#  because the port is already is in use) should work.
+wsfy_cmd = vim.eval("l:cmd")
+start_server(wsfy_cmd)
+
+
+wsfy_port = int(vim.eval("g:cworksheetify_server_port"))
+c_src_filename = vim.eval("l:cSrcFilename")
+
+# Send to server,
+# get result back (as list of lists).
+wsfy_results = run_worksheetify_client("localhost", wsfy_port, c_src_filename)
+
+
+# `wsfy_results` is list of raw strings;
+# `wsfy_output` assumed to be **spaces + comments + result**.
+col_for_ws = 50
+wsfy_output = with_spaces_and_comments(vim.current.buffer[:], wsfy_results, col_for_ws)
+
 EOF
 
     " Assumes Python 2.x
-    let ws_output = pyeval("vim_worksheetify()")
+    let ws_output = pyeval("wsfy_output")
 
     " Each enter in `ws_output` corresponds to output to
     "  append-to the line.
@@ -50,13 +62,13 @@ EOF
     let currLine = 1
     for output in ws_output
         " Append to cursor position
-        call append(currLine + 1, output)
+        call append(currLine, output)
 
         " Worksheetify assumes that the first string of result is
         " appended to the *same* line. So, we join the currentLine with the
         " next.
         if len(output) > 0
-            execute (currLine + 1) . "j!"
+            execute (currLine) . "j!"
         endif
 
         " The next line to append to. Increase by at least 1.

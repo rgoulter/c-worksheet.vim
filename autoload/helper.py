@@ -10,6 +10,8 @@ firstLineCmt = re.compile("\s*//>.*$")
 # Continued comments must begin from the start
 secondLineCmt = re.compile("^\s*//\|.*$")
 
+# Incomplete! Doesn't consider the case where a
+#  `//>` begins on the line following a very long line.
 def acc_worksheet_output(acc, line):
 	fl = re.search(firstLineCmt, line)
 	sl = re.search(secondLineCmt, line)
