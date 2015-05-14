@@ -1,5 +1,8 @@
 let s:plugin_root = expand('<sfile>:h>') . '/../..'
 
+" Look under `<plug_root>/tool` dir. for installations.
+let s:tool_dir = s:plugin_root . '/tool'
+
 " Add <plug>/python to system path,
 " so we can import our python modules.
 python << EOF
@@ -18,15 +21,9 @@ EOF
 
 
 
-" If .vimrc doesn't specify path to `cworksheet`,
-" try and look for it in the plugin folder.
-" otherwise, assume it's on the PATH.
-if !exists("g:cworksheetify_server_command")
+function! s:find_worksheetify_script()
     " Check in <PLUGDIR>/tools/ for a distribution,
     " and use that if the above variable isn't set.
-
-    " Look under `<plug_root>/tool` dir.
-    let s:tool_dir = s:plugin_root . '/tool'
 
     python << EOF
 import vim
@@ -40,12 +37,25 @@ wsfy_script = script_with_latest_version(rs, at_least = "0.2.2")
 
 EOF
 
-    let g:cworksheetify_server_command = pyeval('wsfy_script')
+    return pyeval('wsfy_script')
+endfunction
+
+
+
+" If .vimrc doesn't specify path to `cworksheet`,
+" try and look for it in the plugin folder.
+" otherwise, assume it's on the PATH.
+if !exists("g:cworksheetify_server_command")
+    let g:cworksheetify_server_command = s:find_worksheetify_script()
 
     " If couldn't find, then, default to PATH
     if len(g:cworksheetify_server_command) == 0
-        echom "Couldn't find Wsfy Server, as var, nor under tools."
-        let g:cworksheetify_server_command = "c-worksheetify-server"
+        echom "Couldn't find Worksheetify server. Downloading... [Please wait a moment]"
+        python install_latest_version(tool_dir)
+
+        " Try again.. should have success this time,
+        " since there's a file there now.
+        let g:cworksheetify_server_command = s:find_worksheetify_script()
     endif
 endif
 

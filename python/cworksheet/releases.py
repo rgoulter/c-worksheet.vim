@@ -1,7 +1,13 @@
-import urllib2
 import hashlib
+import glob
 import json
+import os
+import stat
+import urllib
+import urllib2
+import zipfile
 
+from cworksheet.versions import compare_versions
 
 # Repo is at rgoulter/c-worksheet-instrumentor
 gh_api = "https://api.github.com"
@@ -32,6 +38,27 @@ def get_latest_release():
 
 
 
+def is_asset_zip(asset):
+	return asset["content_type"] == "application/zip"
+
+
+
+def get_latest_release_with_zip():
+	all_releases = get_releases()
+
+	if len(all_releases) == 0:
+		return None
+
+	has_zip_asset = lambda r : any(map(is_asset_zip, r["assets"]))
+	releases_with_zips = filter(has_zip_asset, all_releases)
+
+	d = dict((version_of_release(r), r) for r in releases_with_zips)
+	highest_version = sorted(d.keys(), cmp=compare_versions)[-1]
+
+	return d[highest_version]
+
+
+
 # GitHub tag_name of a release.
 # As string. e.g. "v0.2.3", "v0.2.3-SNAPSHOT"
 def version_of_release(release):
@@ -42,8 +69,7 @@ def version_of_release(release):
 def get_browser_url_of_smallest_zip(release):
 	assets = release["assets"]
 
-	is_zip = lambda a : a["content_type"] == "application/zip"
-	zip_assets = filter(is_zip, assets)
+	zip_assets = filter(is_asset_zip, assets)
 
 	if len(zip_assets) == 0:
 		return None
@@ -54,30 +80,33 @@ def get_browser_url_of_smallest_zip(release):
 
 
 
-# Also, urllib.urlretrive(u, intoFName)
-# seems to work.
+# If the user doesn't have any (up-to-date) version of C Worksheet tool,
+# this function can:
+#  1) get latest version from GitHub releases
+#  2) download the zip
+#  3) unzip the archive into a suitable location
+def install_latest_version(into_folder):
+	release = get_latest_release_with_zip()
+	if release == None:
+		return
 
-# From:
-# http://stackoverflow.com/questions/22676/how-do-i-download-a-file-over-http-using-python
-def download(url):
-	file_name = url.split('/')[-1]
-	u = urllib2.urlopen(url)
-	f = open(file_name, 'wb')
-	meta = u.info()
-	file_size = int(meta.getheaders("Content-Length")[0])
-	print "Downloading: %s Bytes: %s" % (file_name, file_size)
+	url = get_browser_url_of_smallest_zip(release)
+	if url == None:
+		return
 
-	file_size_dl = 0
-	block_sz = 8192
-	while True:
-		buffer = u.read(block_sz)
-		if not buffer:
-			break
+	archive_name = url.split("/")[-1]
+	archive = os.path.join(into_folder, archive_name)
 
-		file_size_dl += len(buffer)
-		f.write(buffer)
-		status = r"%10d  [%3.2f%%]" % (file_size_dl, file_size_dl * 100. / file_size)
-		status = status + chr(8)*(len(status)+1)
-		print status,
+	print "CWorksheet: Downloading %s" % url
+	urllib.urlretrieve(url, archive)
 
-	f.close()
+	print "CWorksheet: Unzipping archive.."
+	with zipfile.ZipFile(archive) as z:
+		z.extractall(into_folder)
+
+	# The unzipped files aren't executable.
+	scripts = glob.glob(into_folder + "/*/bin/*")
+	for script in scripts:
+		os.chmod(script, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+
+	print "CWorksheet: Installed!"
