@@ -45,6 +45,9 @@ def get_browser_url_of_smallest_zip(release):
 	is_zip = lambda a : a["content_type"] == "application/zip"
 	zip_assets = filter(is_zip, assets)
 
+	if len(zip_assets) == 0:
+		return None
+
 	(sz, url) = min((a["size"], a["browser_download_url"]) for a in zip_assets)
 
 	return url
