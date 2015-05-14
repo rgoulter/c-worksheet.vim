@@ -1,6 +1,20 @@
-" Run python scripts from same directory as this script.
-execute "pyfile " . expand("<sfile>:h") . "/versions.py"
-execute "pyfile " . expand("<sfile>:h") . "/releases.py"
+let s:plugin_root = expand('<sfile>:h>') . '/../..'
+
+" Add <plug>/python to system path,
+" so we can import our python modules.
+python << EOF
+import vim
+import os, sys
+
+plug_root = vim.eval("s:plugin_root")
+python_dir = os.path.realpath(os.path.join(plug_root, "python"))
+
+if python_dir not in sys.path:
+    sys.path.insert(0, python_dir)
+
+from cworksheet.versions import *
+from cworksheet.releases import *
+EOF
 
 
 
@@ -12,7 +26,6 @@ if !exists("g:cworksheetify_server_command")
     " and use that if the above variable isn't set.
 
     " Look under `<plug_root>/tool` dir.
-    let s:plugin_root = expand('<sfile>:h>') . '/../..'
     let s:tool_dir = s:plugin_root . '/tool'
 
     python << EOF

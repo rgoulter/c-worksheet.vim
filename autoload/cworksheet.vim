@@ -1,3 +1,21 @@
+let s:plugin_root = expand('<sfile>:h>') . '/../..'
+
+" Add <plug>/python to system path,
+" so we can import our python modules.
+python << EOF
+import vim
+import os, sys
+
+plug_root = vim.eval("s:plugin_root")
+python_dir = os.path.realpath(os.path.join(plug_root, "python"))
+
+if python_dir not in sys.path:
+    sys.path.insert(0, python_dir)
+
+from cworksheet.worksheetclient import *
+EOF
+
+
 function! cworksheet#CWorksheetClear()
     " Remove all matches of the regex:
     "   \(\s*\n\)\?\s*\/\/>.*\(\n\s*\/\/|.*\)*
@@ -12,10 +30,6 @@ endfunction
 function! cworksheet#CWorksheetifyServerCommand()
     return g:cworksheetify_server_command . " " . g:cworksheetify_server_port
 endfunction
-
-
-" Load worksheetclient.py from same directory as this script.
-execute "pyfile " . expand("<sfile>:h") . "/worksheetclient.py"
 
 
 function! cworksheet#CWorksheetEvaluate()
