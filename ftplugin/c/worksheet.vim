@@ -51,6 +51,7 @@ if !exists("g:cworksheetify_server_command")
     " If couldn't find, then, default to PATH
     if len(g:cworksheetify_server_command) == 0
         echom "Couldn't find Worksheetify server. Downloading... [Please wait a moment]"
+        call mkdir(s:tool_dir)
         python install_latest_version(tool_dir)
 
         " Try again.. should have success this time,
