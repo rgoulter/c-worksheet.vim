@@ -1,7 +1,7 @@
-let s:plugin_root = expand('<sfile>:h>') . '/../..'
+let s:plugin_root = simplify(expand('<sfile>:h>') . '/../..')
 
 " Look under `<plug_root>/tool` dir. for installations.
-let s:tool_dir = s:plugin_root . '/tool'
+let s:tool_dir = simplify(s:plugin_root . '/tool')
 
 " Add <plug>/python to system path,
 " so we can import our python modules.
