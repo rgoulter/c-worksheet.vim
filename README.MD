@@ -10,9 +10,6 @@ added`rgoulter/c-worksheet-instrumentor` into `<plugin_dir>/tool` if it can't fi
 `c-worksheetify-server`. (It checks this when Vim opens a C file, e.g. `:e
 somefile.c`).
 
-At the moment, has only the keybindings: `<leader>w`, `<leader>e`, which
-evaluate and clear, respectively.
-
 First execution may be a bit slow, but it should be quicker to 'worksheetify'
 subsequently.
 
@@ -30,6 +27,13 @@ This plugin requires Python 2. Vim needs the `python` option. i.e.
 The C worksheet tool requires GCC on `PATH`, and an installation of some JRE.
 (See
 [rgoulter/c-worksheet-instrumentor#requirements](https://github.com/rgoulter/c-worksheet-instrumentor#requirements)).
+
+## Key Bindings
+
+| Key Sequence               | Action                              |
+| ---------------------------| ------------------------------------|
+| `<leader>w` (`\w` default) | Evaluate Worksheet                  |
+| `<leader>e` (`\e` default) | Clear Worksheet                     |
 
 ## Options
 
