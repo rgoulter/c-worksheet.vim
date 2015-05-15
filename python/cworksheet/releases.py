@@ -7,7 +7,7 @@ import urllib
 import urllib2
 import zipfile
 
-from cworksheet.versions import compare_versions
+from cworksheet.versions import compare_versions, version_number_of
 
 # Repo is at rgoulter/c-worksheet-instrumentor
 gh_api = "https://api.github.com"
@@ -61,8 +61,9 @@ def get_latest_release_with_zip():
 
 # GitHub tag_name of a release.
 # As string. e.g. "v0.2.3", "v0.2.3-SNAPSHOT"
+# But drop the initial `v`.
 def version_of_release(release):
-	return release["tag_name"]
+	return version_number_of(release["tag_name"])
 
 
 
