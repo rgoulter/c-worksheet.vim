@@ -28,6 +28,18 @@ The C worksheet tool requires GCC on `PATH`, and an installation of some JRE.
 (See
 [rgoulter/c-worksheet-instrumentor#requirements](https://github.com/rgoulter/c-worksheet-instrumentor#requirements)).
 
+## Commands
+
+This plugin provides two commands:
+
+| Key Sequence               | Action                                                              |
+| ---------------------------| --------------------------------------------------------------------|
+| `CWorksheetEvaluate`       | Evaluate Worksheet. (Clear Worksheet, Save, Evalute Results, Save). |
+| `CWorksheetClear`          | Clear Worksheet. (Clear Worksheet, Save).                           |
+
+This functionality is available without the saving via functions
+`cworksheet#CWorksheetClear()`, `cworksheet#CWorksheetEvaluate()`.
+
 ## Key Bindings
 
 | Key Sequence               | Action                              |
@@ -49,3 +61,12 @@ let g:cworksheetify_server_command = "/path/to/c-worksheet-instrumentor/bin/c-wo
 ```
 
 (where `$HOME/.vim/cworksheet` is this repository).
+
+## Evaluate-Worksheet-on-Save
+
+It may be more convenient to setup so that the worksheet evaluates each time
+the file is saved. This can be achieved using an `autocmd`, like:
+
+```
+autocmd BufWrite *.c call cworksheet#CWorksheetClear() | call cworksheet#CWorksheetEvaluate()
+```
