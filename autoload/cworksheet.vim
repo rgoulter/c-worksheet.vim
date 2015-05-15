@@ -53,10 +53,12 @@ start_server(wsfy_cmd)
 
 wsfy_port = int(vim.eval("g:cworksheetify_server_port"))
 c_src_filename = vim.eval("l:cSrcFilename")
+c_src = "\n".join(vim.current.buffer[:])
 
 # Send to server,
 # get result back (as list of lists).
-wsfy_results = run_worksheetify_client("localhost", wsfy_port, c_src_filename)
+# wsfy_results = run_worksheetify_client("localhost", wsfy_port, c_src_filename)
+wsfy_results = run_worksheetify_client_with_text("localhost", wsfy_port, c_src)
 
 
 # `wsfy_results` is list of raw strings;

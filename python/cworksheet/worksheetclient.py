@@ -8,7 +8,10 @@ import sys
 
 
 def start_server(cmdStr):
-	cmd = shlex.split(cmdStr)
+	# On windows, sys.platform is "win32".
+	# os.name gives 'nt' on Windows, 'posix' on posix-y things.
+	is_posix = not sys.platform.startswith("win")
+	cmd = shlex.split(cmdStr, posix = is_posix)
 
 	srv_p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 

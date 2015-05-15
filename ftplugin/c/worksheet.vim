@@ -1,7 +1,7 @@
 let s:plugin_root = simplify(expand('<sfile>:h>') . '/../..')
 
 " Look under `<plug_root>/tool` dir. for installations.
-let s:tool_dir = simplify(s:plugin_root . '/tool')
+let s:tool_dir = simplify(expand('<sfile>:h>') . '/../../tool')
 
 " Add <plug>/python to system path,
 " so we can import our python modules.
@@ -27,17 +27,21 @@ function! s:find_worksheetify_script()
 
     python << EOF
 import vim
+import sys
 
 tool_dir = vim.eval("s:tool_dir")
 
+script_name = "c-worksheetify-server" if not sys.platform == "win32" else "c-worksheetify-server.bat"
+
 # Doesn't matter if tool dir doesn't exist; wsfy_script will just be '' if so.
 # C-Worksheetify at least version `0.2.2`, bin name `c-worksheetify-server`.
-rs = find_runscripts_under_folder(tool_dir, "c-worksheetify-server")
+rs = find_runscripts_under_folder(tool_dir, script_name)
 wsfy_script = script_with_latest_version(rs, at_least = "0.2.2")
 
 EOF
 
-    return pyeval('wsfy_script')
+    let result = pyeval('wsfy_script')
+    return simplify(result)
 endfunction
 
 
