@@ -34,15 +34,9 @@ def is_port_in_use(port):
 
 # Returns a list-of-lists,
 # as a result corresponding to each line of the input file.
-def run_worksheetify_client(hostname, port, cFilePath):
+def run_worksheetify_client_req(hostname, port, message):
 	clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	clientsocket.connect((hostname, port))
-
-	# Send a message
-	req = { "inputtype": "filepath",
-	        "input": cFilePath,
-	        "outputtype": "json-outputlist" }
-	message = json.dumps(req);
 
 	clientsocket.sendall(message)
 	clientsocket.shutdown(socket.SHUT_WR)
@@ -58,6 +52,28 @@ def run_worksheetify_client(hostname, port, cFilePath):
 
 	lsOfLs = json.loads(received)["result"]
 	return lsOfLs
+
+
+
+def run_worksheetify_client(hostname, port, cFilePath):
+	# Send a message
+	req = { "inputtype": "filepath",
+	        "input": cFilePath,
+	        "outputtype": "json-outputlist" }
+	message = json.dumps(req)
+
+	return run_worksheetify_client_req(hostname, port, message)
+
+
+
+def run_worksheetify_client_with_text(hostname, port, text):
+	# Send a message
+	req = { "inputtype": "text",
+	        "input": text,
+	        "outputtype": "json-outputlist" }
+	message = json.dumps(req)
+
+	return run_worksheetify_client_req(hostname, port, message)
 
 
 
@@ -79,5 +95,5 @@ def with_spaces_and_comments(inputLines, ls_of_results, col_for_ws = 50):
 		else:
 			padding = col_for_ws
 			return [""] + map(firstLine, fst) + map(restLine, rest)
-	
+
 	return [to_cmt(l,r) for (l, r) in zip(inputLines, ls_of_results)]
