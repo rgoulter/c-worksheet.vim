@@ -16,12 +16,30 @@ from cworksheet.worksheetclient import *
 EOF
 
 
+function s:saveview()
+    " winline() is the pertinent value here.
+    let s:winline = winline()
+    normal ms
+endfunction
+
+function s:restoreview()
+    normal `s
+    normal zt
+    " Scroll down by # lines.
+    execute "normal " . s:winline . "\<c-y>"
+endfunction
+
+
 function! cworksheet#CWorksheetClear()
+    call s:saveview()
+
     " Remove all matches of the regex:
     "   \(\s*\n\)\?\s*\/\/>.*\(\n\s*\/\/|.*\)*
     " i.e. all spaces leading up to //> and to EOL,
     "  as well as any blank lines leading up to //| and to EOL.
     execute "silent! %s/\\(\\s*\\n\\)\\?\\s*\\/\\/>.*\\(\\n\\s*\\/\\/|.*\\)*//"
+
+    call s:restoreview()
 endfunction
 
 
@@ -33,6 +51,8 @@ endfunction
 
 
 function! cworksheet#CWorksheetEvaluate()
+    call s:saveview()
+
     let cmd = cworksheet#CWorksheetifyServerCommand()
 
     " Full path of current file/buffer.
@@ -89,4 +109,6 @@ EOF
         " The next line to append to. Increase by at least 1.
         let currLine = currLine + max([1, len(output)])
     endfor
+
+    call s:restoreview()
 endfunction
