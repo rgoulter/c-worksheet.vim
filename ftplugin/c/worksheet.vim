@@ -72,8 +72,14 @@ endif
 
 
 
+" Commands
+command! CWorksheetEvaluate call cworksheet#CWorksheetClear() | write | call cworksheet#CWorksheetEvaluate() | write
+command! CWorksheetClear call cworksheet#CWorksheetClear() | write
+
+
+
 " Keymaps
 
 " <leader>w .. save,evaluate,save.
-nnoremap <buffer> <localleader>w :call cworksheet#CWorksheetClear()<cr>:w<cr>:call cworksheet#CWorksheetEvaluate()<cr>:w<cr>
-nnoremap <buffer> <localleader>e :call cworksheet#CWorksheetClear()<cr>:w<cr>
+nnoremap <buffer> <localleader>w :CWorksheetEvaluate<cr>
+nnoremap <buffer> <localleader>e :CWorksheetClear<cr>
