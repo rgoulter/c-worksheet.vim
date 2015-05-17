@@ -1,14 +1,6 @@
 # C Worksheet (for Vim)
 
-Plugin for Vim to make use of the [C
-worksheet](https://github.com/rgoulter/c-worksheet-instrumentor) tool.  
-This plugin assumes `g:cworksheetify_server_command` is either set to the
-filepath to the appropriate script under `bin/`, or a distribution of the tool
-exists under `<plugin_dir>/tool/`.  
-This plugin will download & unzip the latest release from
-added`rgoulter/c-worksheet-instrumentor` into `<plugin_dir>/tool` if it can't find
-`c-worksheetify-server`. (It checks this when Vim opens a C file, e.g. `:e
-somefile.c`).
+Plugin for Vim to make use of the C worksheet tool<sup>[1](#myfootnote1)</sup>.
 
 First execution may be a bit slow, but it should be quicker to 'worksheetify'
 subsequently.
@@ -18,6 +10,10 @@ Works with Vundle, so can be installed with:
 ```
 Plugin 'rgoulter/c-worksheet.vim'
 ```
+
+The plugin relies on a companion third-party tool, which the plugin will
+**automatically download** if it can't otherwise find it. (It will be
+downloaded into `<plugin_dir/tool>`).
 
 ## Requirements
 
@@ -70,3 +66,8 @@ the file is saved. This can be achieved using an `autocmd`, like:
 ```
 autocmd BufWrite *.c call cworksheet#CWorksheetClear() | call cworksheet#CWorksheetEvaluate()
 ```
+
+* * *
+
+<a name="myfootnote1">1</a>:
+[rgoulter/c-worksheet-instrumentor](https://github.com/rgoulter/c-worksheet-instrumentor)
