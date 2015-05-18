@@ -49,6 +49,14 @@ This functionality is available without the saving via functions
 
 ## Options
 
+### g:cworksheet_no_conceal
+The worksheet outputs `//>`, `//|` as symbols to denote worksheet output.
+If `g:cworksheetify_server_command` is not set to `1` (default `0`), then they
+will be 'concealed' (and appear as) `>`, `|` instead.  
+This makes use of the 'concealed characters' feature in Vim. The C file will
+still contain `//>`, `//|` for the comments.
+
+### g:cworksheetify_server_command
 With a [release of C-Worksheet](https://github.com/rgoulter/c-worksheet-instrumentor/releases),
 unzipped at some path at `path/to/c-worksheet-instrumentor`,  
 it should work with this plugin on vim's runtime path, and setting
