@@ -4,6 +4,8 @@ Plugin for Vim to make use of the C worksheet tool<sup>[1](#myfootnote1)</sup>.
 
 ![demo](https://github.com/rgoulter/c-worksheet.vim/raw/master/demo.gif)
 
+[(Here is the same gif, slower speed).](https://github.com/rgoulter/c-worksheet.vim/raw/master/demo-slow.gif)
+
 First execution may be a bit slow, but it should be quicker to 'worksheetify'
 subsequently.
 
