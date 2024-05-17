@@ -1,0 +1,45 @@
+Before (check c-worksheetify-server on path):
+  if !executable('c-worksheetify-server')
+    throw "c-worksheetify-server not executable"
+  endif
+
+
+# First, check a simple plugin command works:
+
+Given c (a hello world C program, with annotations):
+  #include <stdio.h>
+
+  int main(int argc, char **argv) {
+    printf("Hello World\n");                        //> Hello World
+  }
+
+Do (:CWorksheetClear, to remove the annotations):
+  :CWorksheetClear\<CR>
+
+Expect c (the same hello world C program, without annotations):
+  #include <stdio.h>
+
+  int main(int argc, char **argv) {
+    printf("Hello World\n");
+  }
+
+
+
+# Next, check integration with the external c-worksheetify-server works:
+
+Given c (a hello world C program, with annotations):
+  #include <stdio.h>
+
+  int main(int argc, char **argv) {
+    printf("Hello World\n");
+  }
+
+Do (:CWorksheetEvaluate, to worksheetify the C program):
+  :CWorksheetEvaluate\<CR>
+
+Expect c (the same hello world C program, with worksheet annotations):
+  #include <stdio.h>
+
+  int main(int argc, char **argv) {
+    printf("Hello World\n");                        //> Hello World
+  }
