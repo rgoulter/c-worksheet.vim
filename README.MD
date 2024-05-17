@@ -6,27 +6,32 @@ Plugin for Vim to make use of the C worksheet tool<sup>[1](#myfootnote1)</sup>.
 
 [(Here is the same gif, slower speed).](https://github.com/rgoulter/c-worksheet.vim/raw/master/demo-slow.gif)
 
-First execution may be a bit slow, but it should be quicker to 'worksheetify'
-subsequently.
+Or see the [examples in the c-worksheet-instrumentor
+readme](https://github.com/rgoulter/c-worksheet-instrumentor/?tab=readme-ov-file#worksheet-examples).
 
-Works with Vundle, so can be installed with:
+## Installation
+
+Can be installed with Vundle:
 
 ```
 Plugin 'rgoulter/c-worksheet.vim'
 ```
 
-The plugin relies on a companion third-party tool, which the plugin will
-**automatically download** if it can't otherwise find it. (It will be
-downloaded into `<plugin_dir/tool>`).
+or clone this repository, and add the directory to vim's runtimepath, e.g. in `.vimrc`:
+
+```
+set rtp+=/path/to/.vim/cworksheet.vim/
+```
 
 ## Requirements
 
-This plugin requires Python 2. Vim needs the `python` option. i.e.
-`:echo has('python')` needs to evaluate to true (`1`).
+This plugin requires:
 
-The C worksheet tool requires GCC on `PATH`, and an installation of some JRE.
-(See
-[rgoulter/c-worksheet-instrumentor#requirements](https://github.com/rgoulter/c-worksheet-instrumentor#requirements)).
+- Python 3,
+- Vim needs the `python3` option. i.e. `:echo has('python3')` needs to evaluate to true (`1`),
+- [rgoulter/c-worksheet-instrumentor](https://github.com/rgoulter/c-worksheet-instrumentor).
+
+The C worksheet tool requires GCC or Clang on `PATH`.
 
 ## Commands
 
@@ -57,14 +62,12 @@ This makes use of the 'concealed characters' feature in Vim. The C file will
 still contain `//>`, `//|` for the comments.
 
 ### g:cworksheetify_server_command
-With a [release of C-Worksheet](https://github.com/rgoulter/c-worksheet-instrumentor/releases),
-unzipped at some path at `path/to/c-worksheet-instrumentor`,  
-it should work with this plugin on vim's runtime path, and setting
-`g:cworksheetify_server_command` appropriately. e.g.:
+
+Defaults to `c-worksheetify-server`.
+
+Can be explicitly set to a particular installation of `c-worksheetify-server`.
 
 ```
-set rtp+=/home/richard/.vim/cworksheet/
-
 let g:cworksheetify_server_command = "/path/to/c-worksheet-instrumentor/bin/c-worksheetify-server"
 ```
 
