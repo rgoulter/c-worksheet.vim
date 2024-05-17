@@ -2,7 +2,7 @@ let s:plugin_root = simplify(expand('<sfile>:h>') . '/../..')
 
 " Add <plug>/python to system path,
 " so we can import our python modules.
-python << EOF
+python3 << EOF
 import vim
 import os, sys
 
@@ -58,7 +58,7 @@ function! cworksheet#CWorksheetEvaluate()
     " Full path of current file/buffer.
     let cSrcFilename = expand("%:p")
 
-    python << EOF
+    python3 << EOF
 import vim
 
 # Ensure the Worksheetify server is running.
@@ -88,8 +88,8 @@ wsfy_output = with_spaces_and_comments(vim.current.buffer[:], wsfy_results, col_
 
 EOF
 
-    " Assumes Python 2.x
-    let ws_output = pyeval("wsfy_output")
+    " Assumes vim has python3 support
+    let ws_output = py3eval("wsfy_output")
 
     " Each enter in `ws_output` corresponds to output to
     "  append-to the line.
