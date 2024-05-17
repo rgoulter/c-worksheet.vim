@@ -41,14 +41,14 @@ def run_worksheetify_client_req(hostname, port, message):
 	clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	clientsocket.connect((hostname, port))
 
-	clientsocket.sendall(message)
+	clientsocket.sendall(message.encode('utf-8'))
 	clientsocket.shutdown(socket.SHUT_WR)
 
 	# Receive a message
 	received = "";
 	buf = clientsocket.recv(8)
 	while len(buf) > 0:
-		received = received + buf
+		received = received + buf.decode('utf-8')
 		buf = clientsocket.recv(8)
 
 	clientsocket.close()
@@ -94,9 +94,9 @@ def with_spaces_and_comments(inputLines, ls_of_results, col_for_ws = 50):
 		restLine = lambda x : (col_for_ws * ' ') + "//| " + x
 
 		if padding >= 0:
-			return map(firstLine, fst) + map(restLine, rest)
+			return list(map(firstLine, fst)) + list(map(restLine, rest))
 		else:
 			padding = col_for_ws
-			return [""] + map(firstLine, fst) + map(restLine, rest)
+			return [""] + list(map(firstLine, fst)) + list(map(restLine, rest))
 
 	return [to_cmt(l,r) for (l, r) in zip(inputLines, ls_of_results)]
