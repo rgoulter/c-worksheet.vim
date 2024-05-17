@@ -1,4 +1,4 @@
-let s:plugin_root = simplify(expand('<sfile>:h>') . '/../..')
+let s:plugin_root = simplify(expand('<sfile>:h>') . '/..')
 
 " Add <plug>/python to system path,
 " so we can import our python modules.
