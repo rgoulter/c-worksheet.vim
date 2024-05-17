@@ -11,8 +11,8 @@ endif
 
 
 " Commands
-command! CWorksheetEvaluate call cworksheet#CWorksheetClear() | write | call cworksheet#CWorksheetEvaluate() | write
-command! CWorksheetClear call cworksheet#CWorksheetClear() | write
+command! CWorksheetEvaluate call cworksheet#CWorksheetClear() | silent! write | call cworksheet#CWorksheetEvaluate() | silent! write
+command! CWorksheetClear call cworksheet#CWorksheetClear() | silent! write
 
 
 
