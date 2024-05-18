@@ -25,6 +25,15 @@ jobs:
           wget https://github.com/rgoulter/c-worksheet-instrumentor/releases/download/v0.2.6/c-worksheet-instrumentor-0.2.6.tar
           tar -xf c-worksheet-instrumentor-0.2.6.tar
 
+      - name: Setup Vim Config init.vim
+        run: |
+          echo <(cat << VIMRC > init.vim
+          set rtp+=vader.vim
+          set rtp+=.
+          filetype plugin indent on
+          VIMRC
+          )
+
       - name: Demonstrate C Worksheet
         run: |
           # Uploaded release compiled with recent Java.
@@ -43,12 +52,7 @@ jobs:
           # Uploaded release compiled with recent Java.
           export JAVA_HOME=$JAVA_HOME_21_X64
           export PATH=c-worksheet-instrumentor-0.2.6/bin:$PATH
-          vim -Es -Nu <(cat << VIMRC
-          set rtp+=vader.vim
-          set rtp+=.
-          filetype plugin indent on
-          VIMRC
-          ) -c 'silent Vader! test/*'
+          vim -Es -Nu init.vim -c 'silent Vader! test/*.vader'
         timeout-minutes: 2
 
       - name: Test NeoVim
@@ -56,10 +60,5 @@ jobs:
           # Uploaded release compiled with recent Java.
           export JAVA_HOME=$JAVA_HOME_21_X64
           export PATH=c-worksheet-instrumentor-0.2.6/bin:$PATH
-          nvim -Es -u <(cat << VIMRC
-          set rtp+=vader.vim
-          set rtp+=.
-          filetype plugin indent on
-          VIMRC
-          ) -c 'silent Vader! test/*'
+          nvim -Es -u init.vim -c 'silent Vader! test/*.vader'
         timeout-minutes: 2
