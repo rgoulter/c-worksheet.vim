@@ -39,7 +39,10 @@ def is_port_in_use(port):
 # as a result corresponding to each line of the input file.
 def run_worksheetify_client_req(hostname, port, message):
 	clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	clientsocket.connect((hostname, port))
+	try:
+		clientsocket.connect((hostname, port))
+	except:
+		return None
 
 	clientsocket.sendall(message.encode('utf-8'))
 	clientsocket.shutdown(socket.SHUT_WR)
