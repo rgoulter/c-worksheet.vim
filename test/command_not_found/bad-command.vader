@@ -1,0 +1,39 @@
+# I observed CI got stuck when the c-worksheetify-server command
+# didn't run. (e.g. the Java version was too old).
+#
+# i.e. the `c-worksheetify-server` is on PATH, but fails to run a server.
+#
+# Let's cover this scenario by using a bad cworksheetify server command.
+
+
+Before (set c-worksheetify-server to a command which won't work):
+  let old_cworksheetify_server_command = "c-worksheetify-server"
+  if exists("g:cworksheetify_server_command")
+    let old_cworksheetify_server_command = g:cworksheetify_server_command
+    g:cworksheetify_server_command = "false"
+  else
+    let g:cworksheetify_server_command = "false"
+  endif
+
+Given c (a hello world C program):
+  #include <stdio.h>
+
+  int main(int argc, char **argv) {
+    printf("Hello World\n");
+  }
+
+Do (:CWorksheetEvaluate, which should do nothing):
+  :AssertThrows CWorksheetEvaluate\<CR>
+
+Then (check that CWorksheetEvaluate threw the expected exception):
+  AssertEqual g:vader_exception, "Vim(echoerr):unable to start c-worksheetify server!"
+
+Expect c (the same hello world C program):
+  #include <stdio.h>
+
+  int main(int argc, char **argv) {
+    printf("Hello World\n");
+  }
+
+After (restore c-worksheetify-server to default command):
+  let g:cworksheetify_server_command = old_cworksheetify_server_command
