@@ -68,6 +68,11 @@ jobs:
           vim -Es -Nu init.vim -c 'silent Vader! test/bad_server_command/*.vader'
         timeout-minutes: 2
 
+      - name: Test Vim (with c-worksheetify-server not on PATH)
+        run: |
+          vim -Es -Nu init.vim -c 'silent Vader! test/command_not_found/*.vader'
+        timeout-minutes: 2
+
       - name: Test NeoVim
         run: |
           # Uploaded release compiled with recent Java.
@@ -82,6 +87,12 @@ jobs:
           while pgrep --full 'edu.nus.worksheet.WorksheetifyServer' > /dev/null; do
               sleep 0.5
           done
+
+      - name: Test NeoVim (with bad c-worksheetify-server)
+        run: |
+          export PATH=test/bad_server_command:$PATH
+          nvim -Es -u init.vim -c 'silent Vader! test/bad_server_command/*.vader'
+        timeout-minutes: 2
 
       - name: Test NeoVim (with bad c-worksheetify-server)
         run: |
