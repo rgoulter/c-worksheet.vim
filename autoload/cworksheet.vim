@@ -68,8 +68,16 @@ import vim
 #  properly running, just trying to run it (and ignoring if it crashes
 #  because the port is already is in use) should work.
 wsfy_cmd = vim.eval("l:cmd")
-start_server(wsfy_cmd)
+wsfy_start_server_success = start_server(wsfy_cmd)
+EOF
 
+    if !py3eval("wsfy_start_server_success")
+      echoerr "unable to start c-worksheetify server!"
+      return
+    endif
+
+    python3 << EOF
+import vim
 
 wsfy_port = int(vim.eval("g:cworksheetify_server_port"))
 c_src_filename = vim.eval("l:cSrcFilename")
