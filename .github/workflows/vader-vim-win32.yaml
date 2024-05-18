@@ -1,0 +1,72 @@
+---
+name: Vader Integration Tests (Win32)
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-2019
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Install Vim and Neovim
+        run: |
+          choco install -y vim
+          choco install -y neovim
+
+          pip3 install pynvim
+
+      - name: Download Dependencies
+        run: |
+          git clone https://github.com/junegunn/vader.vim.git
+          Invoke-WebRequest -Uri "https://github.com/rgoulter/c-worksheet-instrumentor/releases/download/v0.2.6/c-worksheet-instrumentor-0.2.6.tar" -OutFile "c-worksheet-instrumentor-0.2.6.tar"
+          tar -xf c-worksheet-instrumentor-0.2.6.tar
+
+      - name: Setup Vim Config init.vim
+        run: |
+          $vimrc = @"
+          set rtp+=vader.vim
+          set rtp+=.
+          filetype plugin indent on
+          " Win32: set .bat
+          let g:cworksheetify_server_command = "c-worksheetify-server.bat"
+          "@
+          $vimrc | Out-File -FilePath init.vim
+
+      - name: Demonstrate C Worksheet
+        run: |
+          # Uploaded release compiled with recent Java.
+          $env:JAVA_HOME = $env:JAVA_HOME_21_X64
+
+          @"
+          #include <stdio.h>
+
+          int main(int argc, char **argv) {
+            printf("Hello World\n");
+          }
+          "@ | Out-File -FilePath hello.c
+          ./c-worksheet-instrumentor-0.2.6/bin/c-worksheet-instrumentor.bat hello.c
+
+      - name: Test NeoVim (with bad c-worksheetify-server)
+        run: |
+          Import-Module "$env:ChocolateyInstall/helpers/chocolateyInstaller.psm1"
+          refreshenv
+          $env:PATH = "test\bad_server_command;" + $env:PATH
+          nvim -Es -u init.vim -c 'Vader! test/bad_server_command/*.vader'
+        timeout-minutes: 2
+
+      - name: Test NeoVim
+        run: |
+          Import-Module "$env:ChocolateyInstall/helpers/chocolateyInstaller.psm1"
+          refreshenv
+          $env:JAVA_HOME = $env:JAVA_HOME_21_X64
+          $env:PATH = "c-worksheet-instrumentor-0.2.6\bin;" + $env:PATH
+          nvim -Es -u init.vim -c 'Vader! test/*.vader'
+        timeout-minutes: 2
