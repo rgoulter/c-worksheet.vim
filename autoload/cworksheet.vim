@@ -80,35 +80,41 @@ c_src = "\n".join(vim.current.buffer[:])
 # wsfy_results = run_worksheetify_client("localhost", wsfy_port, c_src_filename)
 wsfy_results = run_worksheetify_client_with_text("localhost", wsfy_port, c_src)
 
-
-# `wsfy_results` is list of raw strings;
-# `wsfy_output` assumed to be **spaces + comments + result**.
-col_for_ws = 50
-wsfy_output = with_spaces_and_comments(vim.current.buffer[:], wsfy_results, col_for_ws)
+wsfy_output = None
+wsfy_success = False
+if wsfy_results:
+    # `wsfy_results` is list of raw strings;
+    # `wsfy_output` assumed to be **spaces + comments + result**.
+    col_for_ws = 50
+    wsfy_output = with_spaces_and_comments(vim.current.buffer[:], wsfy_results, col_for_ws)
+    wsfy_success = True
 
 EOF
 
     " Assumes vim has python3 support
     let ws_output = py3eval("wsfy_output")
+    let wsfy_success = py3eval("wsfy_success")
 
-    " Each enter in `ws_output` corresponds to output to
-    "  append-to the line.
-    " Being from line 1.
-    let currLine = 1
-    for output in ws_output
-        " Append to cursor position
-        call append(currLine, output)
+    if wsfy_success
+        " Each enter in `ws_output` corresponds to output to
+        "  append-to the line.
+        " Being from line 1.
+        let currLine = 1
+        for output in ws_output
+            " Append to cursor position
+            call append(currLine, output)
 
-        " Worksheetify assumes that the first string of result is
-        " appended to the *same* line. So, we join the currentLine with the
-        " next.
-        if len(output) > 0
-            execute (currLine) . "j!"
-        endif
+            " Worksheetify assumes that the first string of result is
+            " appended to the *same* line. So, we join the currentLine with the
+            " next.
+            if len(output) > 0
+                execute (currLine) . "j!"
+            endif
 
-        " The next line to append to. Increase by at least 1.
-        let currLine = currLine + max([1, len(output)])
-    endfor
+            " The next line to append to. Increase by at least 1.
+            let currLine = currLine + max([1, len(output)])
+        endfor
+    endif
 
     call s:restoreview()
 endfunction
