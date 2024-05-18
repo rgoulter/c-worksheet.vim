@@ -55,10 +55,32 @@ jobs:
           vim -Es -Nu init.vim -c 'silent Vader! test/*.vader'
         timeout-minutes: 2
 
+      - name: Test Vim (with bad c-worksheetify-server)
+        run: |
+          # Kill server (if running)
+          pkill --full 'edu.nus.worksheet.WorksheetifyServer' || true
+
+          export PATH=test/bad_server_command:$PATH
+          vim -Es -Nu init.vim -c 'silent Vader! test/bad_server_command/*.vader'
+        timeout-minutes: 2
+
       - name: Test NeoVim
         run: |
           # Uploaded release compiled with recent Java.
           export JAVA_HOME=$JAVA_HOME_21_X64
           export PATH=c-worksheet-instrumentor-0.2.6/bin:$PATH
           nvim -Es -u init.vim -c 'silent Vader! test/*.vader'
+        timeout-minutes: 2
+
+      - name: Kill Server
+        run: |
+          pkill --signal SIGTERM --full 'edu.nus.worksheet.WorksheetifyServer' || true
+          while pgrep --full 'edu.nus.worksheet.WorksheetifyServer' > /dev/null; do
+              sleep 0.5
+          done
+
+      - name: Test NeoVim (with bad c-worksheetify-server)
+        run: |
+          export PATH=test/bad_server_command:$PATH
+          nvim -Es -u init.vim -c 'silent Vader! test/bad_server_command/*.vader'
         timeout-minutes: 2
