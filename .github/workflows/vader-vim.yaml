@@ -52,7 +52,7 @@ jobs:
           # Uploaded release compiled with recent Java.
           export JAVA_HOME=$JAVA_HOME_21_X64
           export PATH=c-worksheet-instrumentor-0.2.6/bin:$PATH
-          vim -Es -Nu init.vim -c 'silent Vader! test/*.vader'
+          vim -Es -Nu init.vim -c 'Vader! test/*.vader'
         timeout-minutes: 2
 
       - name: Kill Server
@@ -65,12 +65,12 @@ jobs:
       - name: Test Vim (with bad c-worksheetify-server)
         run: |
           export PATH=test/bad_server_command:$PATH
-          vim -Es -Nu init.vim -c 'silent Vader! test/bad_server_command/*.vader'
+          vim -Es -Nu init.vim -c 'Vader! test/bad_server_command/*.vader'
         timeout-minutes: 2
 
       - name: Test Vim (with c-worksheetify-server not on PATH)
         run: |
-          vim -Es -Nu init.vim -c 'silent Vader! test/command_not_found/*.vader'
+          vim -Es -Nu init.vim -c 'Vader! test/command_not_found/*.vader'
         timeout-minutes: 2
 
       - name: Test NeoVim
@@ -78,7 +78,7 @@ jobs:
           # Uploaded release compiled with recent Java.
           export JAVA_HOME=$JAVA_HOME_21_X64
           export PATH=c-worksheet-instrumentor-0.2.6/bin:$PATH
-          nvim -Es -u init.vim -c 'silent Vader! test/*.vader'
+          nvim -Es -u init.vim -c 'Vader! test/*.vader'
         timeout-minutes: 2
 
       - name: Kill Server
@@ -91,11 +91,11 @@ jobs:
       - name: Test NeoVim (with bad c-worksheetify-server)
         run: |
           export PATH=test/bad_server_command:$PATH
-          nvim -Es -u init.vim -c 'silent Vader! test/bad_server_command/*.vader'
+          nvim -Es -u init.vim -c 'Vader! test/bad_server_command/*.vader'
         timeout-minutes: 2
 
       - name: Test NeoVim (with bad c-worksheetify-server)
         run: |
           export PATH=test/bad_server_command:$PATH
-          nvim -Es -u init.vim -c 'silent Vader! test/bad_server_command/*.vader'
+          nvim -Es -u init.vim -c 'Vader! test/bad_server_command/*.vader'
         timeout-minutes: 2
