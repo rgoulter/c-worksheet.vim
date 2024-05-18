@@ -13,13 +13,20 @@ def start_server(cmdStr):
 	is_posix = not sys.platform.startswith("win")
 	cmd = shlex.split(cmdStr, posix = is_posix)
 
-	srv_p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	try:
+		srv_p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	except:
+		return False
 
 	# From v0.2.2, Server should output at least one line when it runs,
 	# So we can 'block' until it runs.
+	#
 	# If server already running (when we try to run another one), it will
 	#  write errors to the same file.
+	# (and we silently ignore it).
 	srv_p.stdout.readline()
+
+	return True
 
 
 
