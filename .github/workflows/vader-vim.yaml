@@ -55,11 +55,15 @@ jobs:
           vim -Es -Nu init.vim -c 'silent Vader! test/*.vader'
         timeout-minutes: 2
 
+      - name: Kill Server
+        run: |
+          pkill --signal SIGTERM --full 'edu.nus.worksheet.WorksheetifyServer' || true
+          while pgrep --full 'edu.nus.worksheet.WorksheetifyServer' > /dev/null; do
+              sleep 0.5
+          done
+
       - name: Test Vim (with bad c-worksheetify-server)
         run: |
-          # Kill server (if running)
-          pkill --full 'edu.nus.worksheet.WorksheetifyServer' || true
-
           export PATH=test/bad_server_command:$PATH
           vim -Es -Nu init.vim -c 'silent Vader! test/bad_server_command/*.vader'
         timeout-minutes: 2
